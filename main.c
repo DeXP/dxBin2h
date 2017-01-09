@@ -27,8 +27,6 @@
 #define ICON_WIDTH 48
 
 enum dxMessageboxIcon {
-    DX_ICON_EMPTY,
-    DX_ICON_ABOUT,
     DX_ICON_ERROR,
     DX_ICON_DONE,
 
@@ -36,15 +34,11 @@ enum dxMessageboxIcon {
 };
 
 const void* icons_data[DX_ICON_COUNT] = {
-    NULL,
-    NULL,
     error_image,
     done_image
 };
 
 int icons_size[DX_ICON_COUNT] = {
-    0,
-    0,
     sizeof(error_image),
     sizeof(done_image)
 };
