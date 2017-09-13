@@ -12,6 +12,12 @@ Building
 You need [Codelite](https://codelite.org/) IDE to compile the project now. Makefiles will be added later.
 
 
+Nuklear+
+-----------
+
+dxBin2h use Nuklear+ as a GUI wrapper: https://github.com/DeXP/nuklear_cross
+
+
 License
 -----------
 

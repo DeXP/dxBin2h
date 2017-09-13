@@ -2,7 +2,7 @@
 <CodeLite_Project Name="dxBin2h" InternalType="Console" Version="10.0.0">
   <Plugins>
     <Plugin Name="qmake">
-      <![CDATA[00020001N0006NixSDL0000000000000001N0015WinCrosscompile000000000000]]>
+      <![CDATA[00030001N0006NixSDL0000000000000001N0007Release0000000000000001N0015WinCrosscompile000000000000]]>
     </Plugin>
     <Plugin Name="CMakePlugin">
       <![CDATA[[{
@@ -39,20 +39,6 @@
   <Dependencies/>
   <VirtualDirectory Name="src">
     <File Name="main.c"/>
-    <VirtualDirectory Name="GUI">
-      <File Name="GUI/noc_file_dialog.h"/>
-      <File Name="GUI/nuklear_cross.c"/>
-      <File Name="GUI/nuklear_cross.h"/>
-      <VirtualDirectory Name="nuklear_drivers">
-        <File Name="GUI/nuklear_drivers/nuklear_gdip.h"/>
-        <File Name="GUI/nuklear_drivers/nuklear_sdl_gl2.h"/>
-        <File Name="GUI/nuklear_drivers/nuklear_sdl_gl3.h"/>
-      </VirtualDirectory>
-      <File Name="GUI/nuklear.h"/>
-      <File Name="GUI/style.c"/>
-      <File Name="GUI/style.h"/>
-      <File Name="GUI/stb_image.h"/>
-    </VirtualDirectory>
     <VirtualDirectory Name="resources">
       <File Name="resources/dxBin2h.rc"/>
       <VirtualDirectory Name="images">
@@ -63,6 +49,11 @@
         <File Name="resources/images/unchecked.png.h"/>
       </VirtualDirectory>
     </VirtualDirectory>
+    <VirtualDirectory Name="nuklear_cross">
+      <File Name="nuklear_cross/nuklear_cross.c"/>
+    </VirtualDirectory>
+    <File Name="noc_file_dialog.h"/>
+    <File Name="style.c"/>
   </VirtualDirectory>
   <Dependencies Name="Debug"/>
   <Dependencies Name="NixSDL"/>
@@ -121,7 +112,9 @@
     <Configuration Name="NixSDL" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="" C_Options="-Os;-Wall;`pkg-config --cflags gtk+-3.0`" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
+        <IncludePath Value="nuklear_cross"/>
         <Preprocessor Value="NDEBUG"/>
+        <Preprocessor Value="NOC_FILE_DIALOG_GTK"/>
       </Compiler>
       <Linker Options="-s;`pkg-config --libs gtk+-3.0`" Required="yes">
         <Library Value="SDL2"/>
@@ -166,6 +159,7 @@
     <Configuration Name="Release" CompilerType="GCC" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="" C_Options="-Os;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
+        <IncludePath Value="nuklear_cross"/>
         <Preprocessor Value="NDEBUG"/>
       </Compiler>
       <Linker Options="-s;-mwindows" Required="yes">
@@ -207,14 +201,18 @@
         <SearchPaths/>
       </Completion>
     </Configuration>
-    <Configuration Name="WinCrosscompile" CompilerType="" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
+    <Configuration Name="WinCrosscompile" CompilerType="Cross GCC ( i686-w64-mingw32 )" DebuggerType="GNU gdb debugger" Type="Executable" BuildCmpWithGlobalSettings="append" BuildLnkWithGlobalSettings="append" BuildResWithGlobalSettings="append">
       <Compiler Options="" C_Options="-Os;-Wall" Assembler="" Required="yes" PreCompiledHeader="" PCHInCommandLine="no" PCHFlags="" PCHFlagsPolicy="0">
         <IncludePath Value="."/>
+        <IncludePath Value="nuklear_cross"/>
         <Preprocessor Value="NDEBUG"/>
+        <Preprocessor Value="NOC_FILE_DIALOG_WIN32"/>
       </Compiler>
       <Linker Options="-s;-mwindows" Required="yes">
         <Library Value="user32"/>
-        <Library Value="gdi32"/>
+        <Library Value="gdiplus"/>
+        <Library Value="ole32"/>
+        <Library Value="shlwapi"/>
       </Linker>
       <ResourceCompiler Options="" Required="no"/>
       <General OutputFile="$(IntermediateDirectory)/$(ProjectName).exe" IntermediateDirectory="./BUILD/WinCrosscompile" Command="./$(ProjectName)" CommandArguments="" UseSeparateDebugArgs="no" DebugArguments="" WorkingDirectory="$(IntermediateDirectory)" PauseExecWhenProcTerminates="no" IsGUIProgram="yes" IsEnabled="yes"/>
@@ -243,7 +241,8 @@
         <CustomPostBuild/>
         <CustomPreBuild>$(IntermediateDirectory)/dxBin2h.rc.o
 $(IntermediateDirectory)/dxBin2h.rc.o:
-	$(MakeDirCommand) $(IntermediateDirectory) &amp; i686-w64-mingw32-windres -i dxBin2h.rc -o $(IntermediateDirectory)/dxBin2h.rc.o</CustomPreBuild>
+	$(MakeDirCommand) $(IntermediateDirectory) &amp; i686-w64-mingw32-windres -i resources/dxBin2h.rc -o $(IntermediateDirectory)/dxBin2h.rc.o
+</CustomPreBuild>
       </AdditionalRules>
       <Completion EnableCpp11="no" EnableCpp14="no">
         <ClangCmpFlagsC/>

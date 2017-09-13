@@ -1,14 +1,13 @@
-#if defined(WIN32)
-#define MSWIN
-#endif
-
 #include <stdio.h>
 #include <string.h>
 
 
-#include "GUI/noc_file_dialog.h"
-#include "GUI/nuklear_cross.h"
-#include "GUI/style.h"
+#include "nuklear_cross/nuklear_cross.h"
+#include "style.h"
+
+#define NOC_FILE_DIALOG_IMPLEMENTATION
+#include "noc_file_dialog.h"
+
 
 
 #include "resources/ttf-font.c"
@@ -73,14 +72,12 @@ int getObjNameByFilename(const char fn[], char* objName){
 }
 
 int main(void){
-    dxNkWinInfo wi;
+    struct nkc nkcx;
     dxPopup p;
     struct nk_context *ctx;
     struct nk_image nkgear;
     struct nk_image checked;
     struct nk_image unchecked;
-
-    int running = 1;
 
     static char fileName[256];
     static int fileNameLen;
@@ -100,22 +97,23 @@ int main(void){
     int ii;
     struct nk_image icons_images[DX_ICON_COUNT];
     
+    int running = nk_true;
+    
     p.active = nk_false;
 
     strcpy(fileName, "Choose file...");
     fileNameLen = strlen(fileName);
 
 
-    dxNkWinInit(&wi, "dxBin2h", WINDOW_WIDTH, WINDOW_HEIGHT);
-    ctx = dxNkCtxInit(&wi, WINDOW_WIDTH, WINDOW_HEIGHT);
-    dxNkLoadDefaultFont(&wi);
-    dxNkLoadFontMem(&wi, ctx, TTFfont, sizeof(TTFfont), 16);
-    nkgear = dxNkLoadImageFromMem((void*)gear_png, sizeof(gear_png) );
-    checked = dxNkLoadImageFromMem( (void*)checked_image, sizeof(checked_image) );
-    unchecked = dxNkLoadImageFromMem( (void*)unchecked_image, sizeof(unchecked_image) );
+    ctx = nkc_init( &nkcx, "dxBin2h", WINDOW_WIDTH, WINDOW_HEIGHT, NKC_WIN_NORMAL);
+    if(!ctx) nkc_rdie("Can't init Nuklear+ library\n");
+    nkc_load_font_memory(&nkcx, TTFfont, sizeof(TTFfont), 16, 0);
+    nkgear = nkc_load_image_memory(&nkcx, (void*)gear_png, sizeof(gear_png) );
+    checked = nkc_load_image_memory(&nkcx, (void*)checked_image, sizeof(checked_image) );
+    unchecked = nkc_load_image_memory(&nkcx, (void*)unchecked_image, sizeof(unchecked_image) );
 
     for(ii=0; ii<DX_ICON_COUNT; ii++)
-        icons_images[ii] = dxNkLoadImageFromMem( icons_data[ii], icons_size[ii] ); 
+        icons_images[ii] = nkc_load_image_memory(&nkcx, icons_data[ii], icons_size[ii]);
         
     set_style(ctx, THEME_RED);
     {struct nk_style_toggle *toggle;
@@ -131,7 +129,8 @@ int main(void){
 
     while (running)
     {
-        running = dxNkMessagePeek(&wi, ctx);
+        union nkc_event e = nkc_poll_events(&nkcx);
+        if( (e.type == NKC_EWINDOW) && (e.window.param == NKC_EQUIT) ) running = nk_false;
 
         /* GUI */
         {
@@ -237,8 +236,8 @@ int main(void){
         nk_end(ctx);}
         if( nk_window_is_closed(ctx, "MainPanel") ) break;
 
-        dxNkRender(&wi);
+        nkc_render(&nkcx, nk_rgb(30,30,30) );
     }
-    dxNkShutdown(&wi);
+    nkc_shutdown(&nkcx);
     return 0;
 }
